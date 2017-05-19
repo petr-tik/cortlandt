@@ -14,6 +14,8 @@ PATH_TO_PHANTOM = "/usr/bin/phantomjs"
 
 NW6_SEARCH_URL = "http://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=USERDEFINEDAREA%5E%7B%22polylines%22%3A%22%7BtqyH%7Cq%5E~Nnk%40kJnaAjDvn%40uLr%5DuYaGkCibAt%40sa%40jMoUtMuA~Beu%40%22%7D&maxPrice=1750&minBedrooms=2&maxBedrooms=2&viewType=LIST"
 
+LOGGER_TAG = "FlatScrape object"
+
 
 class MissingPageError(Exception):
 
@@ -29,22 +31,39 @@ class FlatScrape():
         return clean_url
 
     def __init__(self, url_to_flat, timeout=30, implicit_wait=20):
+        """ 
+        Given a URL to a flat description and optional timeout and 
+        implicit_wait params, creates an object for parsing the page. 
+        The order of parsing is important. First get the monthly_rate and 
+        description from first page, then switch to the Location tab 
+        to get the longitude and latitude. 
+        The only public method is get_flat_info(), returns the dictionary.
+        """
         driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
         driver.set_page_load_timeout(timeout)
         driver.implicitly_wait(implicit_wait)
         driver.maximize_window()
         driver.get(url_to_flat)
+        self.logger = logging.getLogger(LOGGER_TAG)
+        self.logger.setLevel(logging.DEBUG)
         self.driver = driver
         self.flat_url = self.clean_url(url_to_flat)
 
     def _get_flat_coordinates(self):
-        self.driver.find_element_by_id("locationTab").click()
-        sleep(5)
+        try:
+            self.logger.info("Trying to find and click the locationTab")
+            self.driver.find_element_by_id("locationTab").click()
+            sleep(5)
+        except:
+            self.logger.error("Failed to find locationTab")
+
         link = self.driver.find_element_by_xpath(
             """//*[@title="Click to see this area on Google Maps"]""").get_attribute("href")
+        self.logger.info("Extracted URL: {}".format(link))
         chars_at_start = "?ll="
         chars_at_end = "&"
         coordinates = link.split(chars_at_start)[1].split(chars_at_end)[0]
+        self.logger.info("Coordinates are {}".format(coordinates))
         return coordinates
 
     def _get_monthly_rate(self):
@@ -56,9 +75,11 @@ class FlatScrape():
         match = re.search(re_exp, full_text_price)
         if match:
             monthly_rate = int(match.group(1).replace(",", ""))
+            self.logger.info(
+                "Extracted {} as monthly_rate".format(monthly_rate))
         else:
-            # log failure to find monthly_rate
-            pass
+            self.logger.error(
+                "No matching regex in {}".format(full_text_price))
 
         return monthly_rate
 
