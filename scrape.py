@@ -1,7 +1,5 @@
 #! /usr/bin/env python3
 
-from time import sleep
-
 import logging
 
 from selenium import webdriver
@@ -9,6 +7,9 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 import re
+import sys
+from time import sleep
+
 
 PATH_TO_PHANTOM = "/usr/bin/phantomjs"
 
@@ -45,7 +46,7 @@ class FlatScrape():
         driver.maximize_window()
         driver.get(url_to_flat)
         self.logger = logging.getLogger(LOGGER_TAG)
-        self.logger.setLevel(logging.DEBUG)
+        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
         self.driver = driver
         self.flat_url = self.clean_url(url_to_flat)
 
