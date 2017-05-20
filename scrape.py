@@ -93,6 +93,7 @@ class FlatScrape():
 
     def get_flat_info(self):
         res = {}
+        res["URL"] = self.flat_url
         res["rent"] = self._get_monthly_rate()
         res["description"] = self._get_desciption()
         res["coordinates"] = self._get_flat_coordinates()
