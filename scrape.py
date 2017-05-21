@@ -40,15 +40,15 @@ class FlatScrape():
         to get the longitude and latitude. 
         The only public method is get_flat_info(), returns the dictionary.
         """
+        self.logger = logging.getLogger(LOGGER_TAG)
+        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
         driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
         driver.set_page_load_timeout(timeout)
         driver.implicitly_wait(implicit_wait)
         driver.maximize_window()
-        driver.get(url_to_flat)
-        self.logger = logging.getLogger(LOGGER_TAG)
-        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-        self.driver = driver
         self.flat_url = self.clean_url(url_to_flat)
+        driver.get(self.flat_url)
+        self.driver = driver
 
     def _get_flat_coordinates(self):
         try:
@@ -86,8 +86,10 @@ class FlatScrape():
 
     def _get_desciption(self):
         try:
+            self.logger.info("Trying to find and extract description section")
             description = self.driver.find_element_by_id("description").text
         except:
+            self.logger.error("Couldn't find a Description section")
             pass
         return description
 
