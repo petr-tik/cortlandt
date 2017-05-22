@@ -46,8 +46,8 @@ class FlatScrape():
         driver.set_page_load_timeout(timeout)
         driver.implicitly_wait(implicit_wait)
         driver.maximize_window()
-        self.flat_url = self.clean_url(url_to_flat)
-        driver.get(self.flat_url)
+        self.url = self.clean_url(url_to_flat)
+        driver.get(self.url)
         self.driver = driver
 
     def _get_flat_coordinates(self):
@@ -95,7 +95,7 @@ class FlatScrape():
 
     def get_flat_info(self):
         res = {}
-        res["URL"] = self.flat_url
+        res["URL"] = self.url
         res["rent"] = self._get_monthly_rate()
         res["description"] = self._get_desciption()
         res["coordinates"] = self._get_flat_coordinates()
