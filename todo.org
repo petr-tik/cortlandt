@@ -1,0 +1,24 @@
+#+TODO: TODO WIP DONE
+
+TO DO -*- mode: org -*-
+
+#+ STARTUP: showall
+
+* TODO Ready to ship [0%]
+** TODO Scraper [0/2]
+*** WIP Scrape a page into a dictionary of values
+**** DONE Scrape location for GMaps
+**** DONE Scrape monthly rate
+**** TODO Scrape and parse flat description
+***** DONE Brute
+***** TODO Clean the description
+
+*** TODO Scrape a page of page results
+**** TODO Get a list of links
+**** TODO Check if link is new or old
+
+** TODO Gsheets uploader
+*** TODO For a dictionary of flat results, add distances
+*** TODO Find the last row and upload
+*** TODO Updater
+
