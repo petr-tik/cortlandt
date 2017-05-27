@@ -114,6 +114,24 @@ class FlatScrape():
         res["description"] = self._get_desciption()
         res["coordinates"] = self._get_flat_coordinates()
         return res
+def get_list_of_flats(results_list_url, timeout=20, implicit_wait=30):
+    """ 
+    Takes a url to a list of results of the search, 
+    returns a list of flat url to scrape 
+    """
+    driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
+    driver.set_page_load_timeout(timeout)
+    driver.implicitly_wait(implicit_wait)
+    driver.maximize_window()
+    driver.get(results_list_url)
+    try:
+        full_list = driver.find_elements_by_class_name("propertyCard-link")
+    except:
+        pass
+
+    all_hrefs = [x.get_attribute("href") for x in full_list]
+    flat_list = set(all_hrefs)
+    return flat_list
 
 
 def main():
