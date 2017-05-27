@@ -97,13 +97,14 @@ class FlatScrape():
                 "Couldn't find the {} element".format(element_id))
         return monthly_rate
 
-    def _get_desciption(self):
+    def _get_description(self):
         try:
             self.logger.info("Trying to find and extract description section")
             description = self.driver.find_element_by_id("description").text
+            description = description.encode("utf-8", "replace")
         except:
             self.logger.error("Couldn't find a Description section")
-            pass
+            description = ""
         return description
 
     def get_flat_info(self):
