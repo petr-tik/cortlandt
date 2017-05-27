@@ -19,6 +19,8 @@ KGX_SEARCH_URL = "http://www.rightmove.co.uk/property-to-rent/find.html?location
 
 VICTORIA_SEARCH_URL = "http://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=USERDEFINEDAREA%5E%7B%22polylines%22%3A%22aaiyH~k%5DyDgr%40kDkcAjQ_Jvb%40e%5BjR%7Cf%40uS%7Ct%40sh%40%7C_A%22%7D&maxPrice=1750&minBedrooms=2&maxBedrooms=2&viewType=LIST"
 
+searches = [NW6_SEARCH_URL, KGX_SEARCH_URL, VICTORIA_SEARCH_URL]
+
 LOGGER_TAG = "FlatScrape object"
 
 
@@ -36,16 +38,16 @@ class FlatScrape():
         return clean_url
 
     def __init__(self, url_to_flat, timeout=30, implicit_wait=20):
-        """ 
-        Given a URL to a flat description and optional timeout and 
-        implicit_wait params, creates an object for parsing the page. 
-        The order of parsing is important. First get the monthly_rate and 
-        description from first page, then switch to the Location tab 
-        to get the longitude and latitude. 
+        """
+        Given a URL to a flat description and optional timeout and
+        implicit_wait params, creates an object for parsing the page.
+        The order of parsing is important. First get the monthly_rate and
+        description from first page, then switch to the Location tab
+        to get the longitude and latitude.
         The only public method is get_flat_info(), returns the dictionary.
         """
         self.logger = logging.getLogger(LOGGER_TAG)
-        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+        logging.basicConfig(level=logging.DEBUG)
         driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
         driver.set_page_load_timeout(timeout)
         driver.implicitly_wait(implicit_wait)
