@@ -63,31 +63,38 @@ class FlatScrape():
             sleep(5)
         except:
             self.logger.error("Failed to find locationTab")
-
-        link = self.driver.find_element_by_xpath(
-            """//*[@title="Click to see this area on Google Maps"]""").get_attribute("href")
-        self.logger.info("Extracted URL: {}".format(link))
-        chars_at_start = "?ll="
-        chars_at_end = "&"
-        coordinates = link.split(chars_at_start)[1].split(chars_at_end)[0]
-        self.logger.info("Coordinates are {}".format(coordinates))
-        return coordinates
+        try:
+            link = self.driver.find_element_by_xpath(
+                """//*[@title="Click to see this area on Google Maps"]""").get_attribute("href")
+            self.logger.info("Extracted URL: {}".format(link))
+            chars_at_start = "?ll="
+            chars_at_end = "&"
+            coordinates = link.split(chars_at_start)[1].split(chars_at_end)[0]
+            self.logger.info("Coordinates are {}".format(coordinates))
+            return coordinates
+        except NoSuchElementException:
+            self.logger.error("No Gmaps link")
+            return None
 
     def _get_monthly_rate(self):
-        full_text_price = self.driver.find_element_by_id(
-            "propertyHeaderPrice").text
         monthly_rate = 0
-        re_pattern = r"(\d?,?\d{3}) pcm"
-        re_exp = re.compile(re_pattern, re.IGNORECASE | re.UNICODE)
-        match = re.search(re_exp, full_text_price)
-        if match:
-            monthly_rate = int(match.group(1).replace(",", ""))
-            self.logger.info(
-                "Extracted {} as monthly_rate".format(monthly_rate))
-        else:
-            self.logger.error(
-                "No matching regex in {}".format(full_text_price))
+        element_id = "propertyHeaderPrice"
+        try:
+            full_text_price = self.driver.find_element_by_id(element_id).text
 
+            re_pattern = r"(\d?,?\d{3}) pcm"
+            re_exp = re.compile(re_pattern, re.IGNORECASE | re.UNICODE)
+            match = re.search(re_exp, full_text_price)
+            if match:
+                monthly_rate = int(match.group(1).replace(",", ""))
+                self.logger.info(
+                    "Extracted {} as monthly_rate".format(monthly_rate))
+            else:
+                self.logger.error(
+                    "No matching regex in {}".format(full_text_price))
+        except NoSuchElementException:
+            self.logger.error(
+                "Couldn't find the {} element".format(element_id))
         return monthly_rate
 
     def _get_desciption(self):
