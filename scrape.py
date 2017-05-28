@@ -21,7 +21,7 @@ VICTORIA_SEARCH_URL = "http://www.rightmove.co.uk/property-to-rent/find.html?loc
 
 searches = [NW6_SEARCH_URL, KGX_SEARCH_URL, VICTORIA_SEARCH_URL]
 
-LOGGER_TAG = "FlatScrape object"
+LOGGER_TAG = "FlatScrape"
 
 
 class MissingPageError(Exception):

@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     wget
 
 RUN pip3 install --upgrade pip && \
-    pip3 install selenium pygsheets
+    pip3 install googlemaps pygsheets selenium 
 
 
 RUN apt-get install -y phantomjs
@@ -15,5 +15,4 @@ RUN apt-get install -y phantomjs
 COPY service_creds.json service_creds.json
 COPY run.py ./run.py
 COPY scrape.py ./scrape.py
-RUN chmod +x run.py scrape.py
-CMD ["python3", "-i", "/run.py"]
+COPY directions.py ./directions.py
