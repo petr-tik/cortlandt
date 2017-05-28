@@ -107,31 +107,53 @@ class FlatScrape():
             description = ""
         return description
 
+    def _is_page_valid(self):
+        try:
+            error_box = self.driver.find_element_by_class_name("block")
+            if error_box.text == "We are sorry but we could not find the property you have requested.":
+                self.logger.error("{} not a valid property".format(self.url))
+                return False
+            else:
+                self.logger.info("page exists")
+                return True
+        except:
+            self.logger.info("page exists")
+            return True
+
     def get_flat_info(self):
-        res = {}
-        res["URL"] = self.url
-        res["rent"] = self._get_monthly_rate()
-        res["description"] = self._get_desciption()
-        res["coordinates"] = self._get_flat_coordinates()
-        return res
+        if self._is_page_valid():
+            res = {}
+            res["URL"] = self.url
+            res["rent"] = self._get_monthly_rate()
+            res["description"] = self._get_description()
+            res["coordinates"] = self._get_flat_coordinates()
+            return res
+        return None
+
+
 def get_list_of_flats(results_list_url, timeout=20, implicit_wait=30):
     """ 
     Takes a url to a list of results of the search, 
     returns a list of flat url to scrape 
     """
+    logger = logging.getLogger("ListGetter")
     driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
     driver.set_page_load_timeout(timeout)
     driver.implicitly_wait(implicit_wait)
     driver.maximize_window()
     driver.get(results_list_url)
+    class_name = "propertyCard-link"
+    flat_list = []
     try:
-        full_list = driver.find_elements_by_class_name("propertyCard-link")
+        logger.info(
+            "Looking for elements with class_name: {}".format(class_name))
+        full_list = driver.find_elements_by_class_name(class_name)
+        all_hrefs = [x.get_attribute("href") for x in full_list]
+        flat_list = set(all_hrefs)
     except:
-        pass
-
-    all_hrefs = [x.get_attribute("href") for x in full_list]
-    flat_list = set(all_hrefs)
-    return flat_list
+        logger.error("No {} elements found".format(class_name))
+    finally:
+        return flat_list
 
 
 def main():
