@@ -16,3 +16,5 @@ COPY service_creds.json service_creds.json
 COPY run.py ./run.py
 COPY scrape.py ./scrape.py
 COPY directions.py ./directions.py
+COPY g_maps_creds.json ./g_maps_creds.json
+
