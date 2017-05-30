@@ -1,9 +1,11 @@
-
 build:
-	docker build -t flat-scraper .
+	docker build -t cortlandt .
+
+test: build
+	docker run -it cortlandt /bin/bash -c "python3 -m unittest discover /app/"
 
 run:
-	docker run -it flat-scraper /bin/bash -c "python3 -i scrape.py"
+	docker run -it cortlandt /bin/bash -c "python3 -i ./app/run.py"
 
 
 

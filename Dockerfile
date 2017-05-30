@@ -11,10 +11,8 @@ RUN pip3 install --upgrade pip && \
 
 RUN apt-get install -y phantomjs
 
-
-COPY service_creds.json service_creds.json
-COPY run.py ./run.py
-COPY scrape.py ./scrape.py
-COPY directions.py ./directions.py
-COPY g_maps_creds.json ./g_maps_creds.json
+RUN mkdir -p ./app/
+COPY *.json ./app/
+COPY *.py ./app/
+COPY /tests/ ./app/tests/
 
