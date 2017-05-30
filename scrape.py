@@ -47,7 +47,7 @@ class FlatScrape():
         The only public method is get_flat_info(), returns the dictionary.
         """
         self.logger = logging.getLogger(LOGGER_TAG)
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.INFO)
         driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
         driver.set_page_load_timeout(timeout)
         driver.implicitly_wait(implicit_wait)
@@ -69,8 +69,13 @@ class FlatScrape():
             self.logger.info("Extracted URL: {}".format(link))
             chars_at_start = "?ll="
             chars_at_end = "&"
-            coordinates = link.split(chars_at_start)[1].split(chars_at_end)[0]
-            self.logger.info("Coordinates are {}".format(coordinates))
+
+            coordinates_str = link.split(chars_at_start)[
+                1].split(chars_at_end)[0]
+            self.logger.info("Coordinates are {}".format(coordinates_str))
+
+            coordinates = tuple([float(item)
+                                 for item in coordinates_str.split(",")])
             return coordinates
         except NoSuchElementException:
             self.logger.error("No Gmaps link")
@@ -134,7 +139,10 @@ class FlatScrape():
 def get_list_of_flats(results_list_url, timeout=20, implicit_wait=30):
     """ 
     Takes a url to a list of results of the search, 
-    returns a list of flat url to scrape 
+    returns a list of flat url to scrape.
+
+    Uses another instance of PhantomJS to scrape every element with     
+    class_name = "propertyCard-link"
     """
     logger = logging.getLogger("ListGetter")
     driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
