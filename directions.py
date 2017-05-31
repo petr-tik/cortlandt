@@ -25,18 +25,15 @@ class DirectionsFromFlat():
         self.flat = flat_coords
         cn_office = (51.521120, -0.101294)
         self.office = cn_office
-
         key = self._get_key()
-
         try:
             self.logger.info("Trying to connect to Gmaps API")
-
             self.gmaps = googlemaps.Client(key)
         except:
             self.logger.error("Couldn't connect to the Gmaps API")
 
     def _get_key(self):
-        fname = "g_maps_creds.json"
+        fname = "./app/g_maps_creds.json"
         try:
             import json
             with open(fname) as f:
@@ -75,7 +72,8 @@ class DirectionsFromFlat():
                     "elements"][0]["duration"]["value"]
                 return seconds // 60
             else:
-                self.logger.error("Response wasn't ok")
+                self.logger.error(
+                    "Request failed. Response status: {}".format(response["status"]))
                 return error_return
         except:
             self.logger.error("API threw exception")
@@ -163,6 +161,3 @@ class DirectionsFromFlat():
         res["Time_Julius_to_LSE"], res[
             "Route_Julius_to_LSE"] = self.julius_directions()
         return res
-
-f = DirectionsFromFlat(woodchurch_flat)
-pprint.pprint(f.full_directions())

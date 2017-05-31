@@ -125,6 +125,11 @@ class FlatScrape():
             self.logger.info("page exists")
             return True
 
+    def _save_screenshot(self, fname=None):
+        if fname == None:
+            fname = self.url.split(".html")[0] + ".png"
+        self.driver.save_screenshot(fname)
+
     def get_flat_info(self):
         if self._is_page_valid():
             res = {}
@@ -162,13 +167,3 @@ def get_list_of_flats(results_list_url, timeout=20, implicit_wait=30):
         logger.error("No {} elements found".format(class_name))
     finally:
         return flat_list
-
-
-def main():
-    test_flat = "http://www.rightmove.co.uk/property-to-rent/property-59802910.html"
-    test_flat_fail = "http://www.rightmove.co.uk/property-to-rent/property-65749053.html"
-    f = FlatScrape(test_flat)
-    print(f.get_flat_info())
-
-if __name__ == "__main__":
-    main()
