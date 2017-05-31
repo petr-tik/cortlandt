@@ -63,23 +63,22 @@ class FlatScrape():
             sleep(5)
         except:
             self.logger.error("Failed to find locationTab")
+            raise NoSuchElementException
         try:
             link = self.driver.find_element_by_xpath(
                 """//*[@title="Click to see this area on Google Maps"]""").get_attribute("href")
             self.logger.info("Extracted URL: {}".format(link))
             chars_at_start = "?ll="
             chars_at_end = "&"
-
             coordinates_str = link.split(chars_at_start)[
                 1].split(chars_at_end)[0]
             self.logger.info("Coordinates are {}".format(coordinates_str))
-
             coordinates = tuple([float(item)
                                  for item in coordinates_str.split(",")])
             return coordinates
         except NoSuchElementException:
-            self.logger.error("No Gmaps link")
-            return None
+            self.logger.error("No Gmaps link. NoSuchElementException")
+            raise NoSuchElementException
 
     def _get_monthly_rate(self):
         monthly_rate = 0
