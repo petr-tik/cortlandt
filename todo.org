@@ -9,13 +9,22 @@ TO DO -*- mode: org -*-
 *** WIP Scrape a page into a dictionary of values
 **** DONE Scrape location for GMaps
 **** DONE Scrape monthly rate
-**** TODO Scrape and parse flat description
+**** DONE Scrape and parse flat description
 ***** DONE Brute
 ***** TODO Clean the description
 
 *** TODO Scrape a page of page results
-**** TODO Get a list of links
+**** DONE Get a list of links
 **** TODO Check if link is new or old
+*** TODO Make tests pass
+**** TODO try reinstalling phantomjs and/or from source
+** TODO Directions
+*** TODO fix the time_to_finish method
+only looks at the first row (index 0) and the first element's duration. Rows can have more than 1 value, find a way to return a true value.
+
+Idea: take the average?
+
+https://developers.google.com/maps/documentation/distance-matrix/intro
 
 ** TODO Gsheets uploader
 *** TODO For a dictionary of flat results, add distances
