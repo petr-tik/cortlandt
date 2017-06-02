@@ -5,8 +5,8 @@ TO DO -*- mode: org -*-
 #+ STARTUP: showall
 
 * TODO Ready to ship [0%]
-** TODO Scraper [0/2]
-*** WIP Scrape a page into a dictionary of values
+** TODO Scraper [1/3]
+*** DONE Scrape a page into a dictionary of values
 **** DONE Scrape location for GMaps
 **** DONE Scrape monthly rate
 **** DONE Scrape and parse flat description
@@ -30,4 +30,9 @@ https://developers.google.com/maps/documentation/distance-matrix/intro
 *** TODO For a dictionary of flat results, add distances
 *** TODO Find the last row and upload
 *** TODO Updater
-
+*** TODO Add 2 columns: date uploaded and date updated
+** TODO Write up design docs
+** TODO Pygsheets PR
+*** TODO Correct typos
+     |  remove_permissions(self, file_id, addr, permisssions_in=None)
+     |      remove a users permission
