@@ -16,3 +16,6 @@ COPY *.json ./app/
 COPY *.py ./app/
 COPY /tests/ ./app/tests/
 
+ENV PYTHONPATH=$PYTHONPATH:/app/
+
+# CMD ["python3", "-i", "/scrape.py"]
