@@ -1,10 +1,7 @@
+# -*- coding: utf-8 -*-
 #! /usr/bin/env python3
 
 import logging
-
-from selenium import webdriver
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 import re
 import sys
@@ -18,10 +15,13 @@ NW6_SEARCH_URL = "http://www.rightmove.co.uk/property-to-rent/find.html?location
 KGX_SEARCH_URL = "http://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=USERDEFINEDAREA%5E%7B%22polylines%22%3A%22wcryH~jUzoAtAjJvdAmx%40n%7D%40iUhR_NixAnA%7D_A%22%7D&maxPrice=1750&minBedrooms=2&maxBedrooms=2&viewType=LIST"
 
 VICTORIA_SEARCH_URL = "http://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=USERDEFINEDAREA%5E%7B%22polylines%22%3A%22aaiyH~k%5DyDgr%40kDkcAjQ_Jvb%40e%5BjR%7Cf%40uS%7Ct%40sh%40%7C_A%22%7D&maxPrice=1750&minBedrooms=2&maxBedrooms=2&viewType=LIST"
+from selenium import webdriver
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 searches = [NW6_SEARCH_URL, KGX_SEARCH_URL, VICTORIA_SEARCH_URL]
 
-LOGGER_TAG = "FlatScrape"
+PATH_TO_PHANTOM = "/usr/bin/phantomjs"
 
 
 class MissingPageError(Exception):
@@ -46,7 +46,7 @@ class FlatScrape():
         to get the longitude and latitude.
         The only public method is get_flat_info(), returns the dictionary.
         """
-        self.logger = logging.getLogger(LOGGER_TAG)
+        self.logger = logging.getLogger("FlatScrape")
         logging.basicConfig(level=logging.INFO)
         driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
         driver.set_page_load_timeout(timeout)
@@ -57,16 +57,30 @@ class FlatScrape():
         self.driver = driver
 
     def _get_flat_coordinates(self):
+        """
+        Uses the rightmove page structure. 
+        locationTab contains a URL to Google StreetView 
+        with coordinates embedded in the URL.
+
+        Clicks the locationTab, extracts the href from an element 
+        with a given xpath.
+
+        If successful - 
+            Returns a tuple of flaot for coordinates 
+        Else 
+            returns (-1, -1)
+        """
         try:
             self.logger.info("Trying to find and click the locationTab")
             self.driver.find_element_by_id("locationTab").click()
             sleep(5)
         except:
             self.logger.error("Failed to find locationTab")
-            raise NoSuchElementException
+            return (-1, -1)
         try:
+            xpath_to_query = """//*[@title="Click to see this area on Google Maps"]"""
             link = self.driver.find_element_by_xpath(
-                """//*[@title="Click to see this area on Google Maps"]""").get_attribute("href")
+                xpath_to_query).get_attribute("href")
             self.logger.info("Extracted URL: {}".format(link))
             chars_at_start = "?ll="
             chars_at_end = "&"
@@ -77,15 +91,23 @@ class FlatScrape():
                                  for item in coordinates_str.split(",")])
             return coordinates
         except NoSuchElementException:
-            self.logger.error("No Gmaps link. NoSuchElementException")
-            raise NoSuchElementException
+            self.logger.error("No URL to StreetView link.")
+            return (-1, -1)
 
     def _get_monthly_rate(self):
-        monthly_rate = 0
+        """
+        Extracts the text of the propertyHeaderPrice element 
+        and searches for the compiled regex
+
+        If successful, 
+            Returns an int for monthly rent (usually in the 1000 - 2500 range)
+        Else 
+            swallows exceptions internally and returns -1
+        """
+        monthly_rate = -1
         element_id = "propertyHeaderPrice"
         try:
             full_text_price = self.driver.find_element_by_id(element_id).text
-
             re_pattern = r"(\d?,?\d{3}) pcm"
             re_exp = re.compile(re_pattern, re.IGNORECASE | re.UNICODE)
             match = re.search(re_exp, full_text_price)
@@ -112,6 +134,9 @@ class FlatScrape():
         return description
 
     def _is_page_valid(self):
+        """
+        Boolean function to check if the page is valid
+        """
         try:
             error_box = self.driver.find_element_by_class_name("block")
             if error_box.text == "We are sorry but we could not find the property you have requested.":
@@ -125,11 +150,20 @@ class FlatScrape():
             return True
 
     def _save_screenshot(self, fname=None):
+        """
+        Saves a screenshot of the page to cwd.
+        Unless a fname is provided, the screenshot file is called 
+        {self.url}.png
+        """
         if fname == None:
             fname = self.url.split(".html")[0] + ".png"
         self.driver.save_screenshot(fname)
 
     def get_flat_info(self):
+        """ 
+        If the page is valid, a dictionary of result is created and 
+        populated by calling other class methods to scrape the page. 
+        """
         if self._is_page_valid():
             res = {}
             res["URL"] = self.url
