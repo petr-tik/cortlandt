@@ -125,7 +125,7 @@ class FlatScrape():
 
     def _get_description(self):
         try:
-            self.logger.info("Trying to find and extract description section")
+            self.logger.info("Extracting description from {}".format(self.url))
             description = self.driver.find_element_by_id("description").text
             description = description.encode("utf-8", "replace")
         except:
@@ -140,13 +140,13 @@ class FlatScrape():
         try:
             error_box = self.driver.find_element_by_class_name("block")
             if error_box.text == "We are sorry but we could not find the property you have requested.":
-                self.logger.error("{} not a valid property".format(self.url))
+                self.logger.error("{} not a valid page".format(self.url))
                 return False
             else:
-                self.logger.info("page exists")
+                self.logger.info("{} exists".format(self.url))
                 return True
         except:
-            self.logger.info("page exists")
+            self.logger.info("{} exists".format(self.url))
             return True
 
     def _save_screenshot(self, fname=None):
@@ -166,9 +166,9 @@ class FlatScrape():
         """
         if self._is_page_valid():
             res = {}
-            res["URL"] = self.url
-            res["rent"] = self._get_monthly_rate()
-            res["description"] = self._get_description()
+            res["Flat_link"] = self.url
+            res["Rent_monthly"] = self._get_monthly_rate()
+            res["Description"] = self._get_description()
             res["coordinates"] = self._get_flat_coordinates()
             return res
         return None
