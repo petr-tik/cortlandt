@@ -27,12 +27,22 @@ Idea: take the average?
 https://developers.google.com/maps/documentation/distance-matrix/intro
 
 ** TODO Gsheets uploader
-*** TODO For a dictionary of flat results, add distances
-*** TODO Find the last row and upload
+*** DONE For a dictionary of flat results, add distances
+*** WIP Find the last row and upload
+Failing to insert_rows from flat response. 
+Bytestrings in the dict aren't serializable.
+https://stackoverflow.com/questions/24369666/typeerror-b1-is-not-json-serializable
+
 *** TODO Updater
 *** TODO Add 2 columns: date uploaded and date updated
 ** TODO Write up design docs
-** TODO Pygsheets PR
-*** TODO Correct typos
+** DONE Pygsheets PR
+*** DONE Correct typos
      |  remove_permissions(self, file_id, addr, permisssions_in=None)
      |      remove a users permission
+     |  update_row(index, values, col_offset=0)[source]
+     |      update an existing row with values
+
+            ...
+            col_offset – rows to skip before inserting values 
+            surely columns to skip
