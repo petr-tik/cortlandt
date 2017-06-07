@@ -55,7 +55,10 @@ class DirectionsFromFlat():
 
         Queries distance_matrix API and returns the number of minutes. 
         Walking is independent of departure time (like transit, 
-        where tube times matter), so defaults to now 
+        where tube times matter), so defaults to now. 
+
+        For transit the solution is to run the deamon at normal time of commute 
+        0830 - 0900 
         """
         if start == None:
             start = self.flat
@@ -63,7 +66,8 @@ class DirectionsFromFlat():
             "Finding time to {} from {} to {}".format(mode, start, finish))
         error_return = -1
         try:
-            self.logger.info("Sending request to GMaps Distance Matrix")
+            self.logger.info("Request to GMaps Distance Matrix. Mode: \
+                              {}, {} -> {}".format(mode, start, finish))
             response = self.gmaps.distance_matrix(
                 start, finish, mode=mode, departure_time=dep_time)
             if response['status'] == "OK":
@@ -89,7 +93,7 @@ class DirectionsFromFlat():
             start = self.flat
         return self.time_to_finish(start, finish, mode="transit")
 
-    def _find_closest_pool(self):
+    def _find_closest_pool(self, pools_to_consider=None):
         """ 
         Input:
         - object itself with coordinates
@@ -104,12 +108,14 @@ class DirectionsFromFlat():
                  "Pancras Square Leisure": (51.533834, -0.126326),
                  "Kentish Town Sports Centre": (51.547039, -0.144027)
                  }
+        if pools_to_consider == None:
+            pools_to_consider = pools
         min_time = 100  # won't be walking for a hundred minutes
         closest_pool = None
-        for key in pools:
-            time_to_pool = self.time_to_walk(pools[key])
+        for key in pools_to_consider:
+            time_to_pool = self.time_to_walk(pools_to_consider[key])
             if not closest_pool or time_to_pool < min_time:
-                closest_pool = pools[key]
+                closest_pool = pools_to_consider[key]
                 min_time = time_to_pool
         return (closest_pool, min_time)
 
@@ -146,7 +152,7 @@ class DirectionsFromFlat():
         route = self.link_to_transit(lse_library)
         return time, route
 
-    def full_directions(self):
+    def get_directions(self):
         res = {}
         closest_pool, res["Time_Flat_to_pool"] = self._find_closest_pool()
         res["Route_flat_to_pool"] = self.link_to_walk(closest_pool)
@@ -161,3 +167,8 @@ class DirectionsFromFlat():
         res["Time_Julius_to_LSE"], res[
             "Route_Julius_to_LSE"] = self.julius_directions()
         return res
+
+
+if __name__ == "__main__":
+    f = DirectionsFromFlat(woodchurch_flat)
+    f.get_directions()

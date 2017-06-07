@@ -21,12 +21,17 @@ def main():
         for url in get_list_of_flats(search_url):
             try:
                 f = FlatScrape(url)
-                if f:
-                    response = f.get_flat_info()
-                    if response:
+                response = f.get_flat_info()
+                if response:
+                    try:
                         f = DirectionsFromFlat(response["coordinates"])
-                        pprint.pprint(f.full_directions())
+                        dir_dict = f.get_directions()
+                        response.update(dir_dict)
+                        pprint.pprint(response)
+                    except:
+                        pass
             except:
+                logging.error("Couldn't scrape {}".format(url))
                 pass
 
 if __name__ == "__main__":
