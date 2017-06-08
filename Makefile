@@ -13,4 +13,7 @@ sheets: build
 directions: build
 	docker run -it cortlandt /bin/bash -c "python3 -i ./app/directions.py"
 
+doc: build
+	docker run -it cortlandt /bin/bash
+
 re: build run
