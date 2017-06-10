@@ -27,7 +27,8 @@ def main():
                         f = DirectionsFromFlat(response["coordinates"])
                         dir_dict = f.get_directions()
                         response.update(dir_dict)
-                        pprint.pprint(response)
+                        wks = WSheet()
+                        wks.upload_flat(response)
                     except:
                         pass
             except:
