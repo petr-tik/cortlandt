@@ -27,12 +27,14 @@ def main():
                         f = DirectionsFromFlat(response["coordinates"])
                         dir_dict = f.get_directions()
                         response.update(dir_dict)
-                        wks = WSheet()
+
                         wks.upload_flat(response)
                     except:
-                        pass
+                        logging.exception(
+                            "Calculate directions for {}".format(self.url))
+
             except:
-                logging.error("Couldn't scrape {}".format(url))
+                logging.exception("Couldn't scrape {}".format(self.url))
                 pass
 
 if __name__ == "__main__":
