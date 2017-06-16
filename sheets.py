@@ -12,7 +12,7 @@ from datetime import date
 
 class WSheet(pygsheets.Worksheet):
 
-    def __init__(self, worksheet_id=None, sheet_title=None):
+    def __init__(self, worksheet_id=None):
         logging.basicConfig(filename="app.log", level=logging.DEBUG)
         self.logger = logging.getLogger("Flat hunter bot")
         self.logger.info("Trying to connect and authorise")
@@ -28,11 +28,9 @@ class WSheet(pygsheets.Worksheet):
             with open("./app/g_sheets_creds.json") as f:
                 data = json.load(f)
                 self.worksheet_id = data["G_SHEETS_ID"]
-        gc = authorised.open_by_key(self.worksheet_id)
-        if sheet_title == None:
-            self.sheet_title = "flats"
         else:
-            self.sheet_title = sheet_title
+            self.worksheet_id = worksheet_id
+        gc = authorised.open_by_key(self.worksheet_id)
         self.flat_wks = gc.worksheet_by_title(self.sheet_title)
         self.rent_wks = gc.worksheet_by_title("rents")
 
