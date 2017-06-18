@@ -31,7 +31,7 @@ class WSheet(pygsheets.Worksheet):
         else:
             self.worksheet_id = worksheet_id
         gc = authorised.open_by_key(self.worksheet_id)
-        self.flat_wks = gc.worksheet_by_title(self.sheet_title)
+        self.flat_wks = gc.worksheet_by_title("flats")
         self.rent_wks = gc.worksheet_by_title("rents")
 
     def find_header(self):
