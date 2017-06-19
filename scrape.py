@@ -173,7 +173,7 @@ def get_list_of_flats(results_list_url, timeout=20, implicit_wait=30):
     Uses another instance of PhantomJS to scrape every element with     
     class_name = "propertyCard-link"
     """
-    logger = logging.getLogger("ListGetter")
+    logger = logging.getLogger("FlatListGetter")
     driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
     driver.set_page_load_timeout(timeout)
     driver.implicitly_wait(implicit_wait)
