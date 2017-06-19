@@ -181,13 +181,15 @@ def get_list_of_flats(results_list_url, timeout=20, implicit_wait=30):
     driver.get(results_list_url)
     class_name = "propertyCard-link"
     flat_list = []
+    logger.info("Looking for elements with class_name: {} from {}".format(
+        class_name, results_list_url))
     try:
-        logger.info(
-            "Looking for elements with class_name: {}".format(class_name))
         full_list = driver.find_elements_by_class_name(class_name)
-        all_hrefs = [x.get_attribute("href") for x in full_list]
-        flat_list = set(all_hrefs)
     except:
         logger.error("No {} elements found".format(class_name))
+    else:
+        all_hrefs = [x.get_attribute("href") for x in full_list]
+        flat_list = set(all_hrefs)
+        logger.info("Extracted {} flat URLs".format(len(flat_list)))
     finally:
         return flat_list
