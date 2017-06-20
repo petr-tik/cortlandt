@@ -66,7 +66,8 @@ class FlatScrape():
             self.driver.find_element_by_id("locationTab").click()
             sleep(5)
         except:
-            self.logger.error("Failed to find locationTab")
+            self.logger.error(
+                "Failed to find locationTab at {}".format(self.url))
             return (-1, -1)
         try:
             xpath_to_query = """//*[@title="Click to see this area on Google Maps"]"""

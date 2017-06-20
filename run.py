@@ -16,7 +16,7 @@ def prepare_args():
         description="Set monthly rent (in GBP) and number of rooms")
     parser.add_argument("bedrooms", type=int,
                         help="number of bedrooms in the flat")
-    parser.add_argument("rent_monthly", type=int,
+    parser.add_argument("rent", type=int,
                         help="GBP amount paid monthly. Allowed - 0, MAX_INT with 250 increment")
     return parser.parse_args()
 
@@ -34,7 +34,7 @@ def prepare_searches(args):
     new_search_urls = []
     for search_url in searches:
         new_search_urls.append(search_url.format(
-            args.rent_monthly, args.bedrooms))
+            args.rent, args.bedrooms))
     return new_search_urls
 
 
@@ -47,26 +47,24 @@ def main():
 
     args = prepare_args()
     searches = prepare_searches(args)
-    print(searches)
     for search_url in searches:
-        for url in get_list_of_flats(search_url):
+        for flat_url in get_list_of_flats(search_url):
             try:
-                f = FlatScrape(url)
+                f = FlatScrape(flat_url)
                 response = f.get_flat_info()
                 if response:
                     try:
                         f = DirectionsFromFlat(response["coordinates"])
                         dir_dict = f.get_directions()
                         response.update(dir_dict)
-
                         wks.upload_flat(response)
                     except:
                         logging.exception(
-                            "Calculate directions for {}".format(self.url))
-
+                            "Failed to calculate directions for {}".format(self.flat_url))
             except:
-                logging.exception("Couldn't scrape {}".format(self.url))
+                logging.exception("Couldn't scrape {}".format(self.flat_url))
                 pass
+
 
 if __name__ == "__main__":
     from directions import *
