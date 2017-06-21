@@ -11,6 +11,16 @@ Scraper of rental flats on offer in specific areas.
   * phantomjs 
 
 
+### Run
+
+Use the Makefile to build a docker container. Put the API credits into json files:
+
+  * g\_maps\_creds.json
+  * g\_sheets\_creds.json
+  * g\_sheets\_id.json
+
+run.py takes 2 arguments - number of bedrooms and max monthly rent. Edit the Makefile run command to change defaults.
+
 ### Design
 
 The Spareroom search URL keeps all necessary parameters, including the location identifier (as a set of polylines). This combined with spareroom's scrape-friendly robots.txt makes it a good target for scraping. Manually selected and saved the search URLs for areas of interest, 
