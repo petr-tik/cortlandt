@@ -17,5 +17,8 @@ COPY *.py ./app/
 COPY /tests/ ./app/tests/
 
 ENV PYTHONPATH=$PYTHONPATH:/app/
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
 
 # CMD ["python3", "-i", "/scrape.py"]
