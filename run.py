@@ -38,36 +38,78 @@ def prepare_searches(args):
     return new_search_urls
 
 
+def get_old_and_new_flats(search_urls, wks):
+    """ 
+    Input:
+        WSheet object
+        search_urls - array of URLs 
+
+    """
+    old_flats = list(wks.get_flats().keys())
+    new_flats = []
+    for search_url in search_urls:
+        for flat_url in get_list_of_flats(search_url):
+            if flat_url not in old_flats:
+                new_flats.append(flat_url)
+    return old_flats, new_flats
+
+
+def upload_new_flats(wks, new_flat_urls):
+    """
+    Input:
+        WSheet object to keep connection with the Google Sheet
+        flat_urls - array of flat URLs that aren't in the Worksheet yet
+
+    Output:
+    None
+
+    Constructs the full dictionary response and uploads to the worksheet.
+    """
+    for flat_url in new_flat_urls:
+        try:
+            f = FlatScrape(flat_url)
+            response = f.get_flat_info()
+            if response:
+                try:
+                    f = DirectionsFromFlat(response["coordinates"])
+                    dir_dict = f.get_directions()
+                    response.update(dir_dict)
+                    wks.upload_flat(response)
+                except:
+                    logging.exception(
+                        "Failed to calculate directions for {}".format(flat_url))
+        except:
+            logging.exception("Couldn't scrape {}".format(flat_url))
+            pass
+
+
+def update_old_flats(wks, flat_urls):
+    """
+    Input:
+        WSheet object to keep connection with the Google Sheet
+        flat_urls - array of flat URLs that are already in the Worksheet
+
+    Output:
+    None
+    """
+    pass
+
+
 def main():
     logging.basicConfig(filename='myapp.log', level=logging.INFO)
 
     logging.info("Scraping")
     wks = WSheet()
-    scraped_flats = wks.get_flats()
-
     args = prepare_args()
     searches = prepare_searches(args)
-    for search_url in searches:
-        for flat_url in get_list_of_flats(search_url):
-            try:
-                f = FlatScrape(flat_url)
-                response = f.get_flat_info()
-                if response:
-                    try:
-                        f = DirectionsFromFlat(response["coordinates"])
-                        dir_dict = f.get_directions()
-                        response.update(dir_dict)
-                        wks.upload_flat(response)
-                    except:
-                        logging.exception(
-                            "Failed to calculate directions for {}".format(self.flat_url))
-            except:
-                logging.exception("Couldn't scrape {}".format(self.flat_url))
-                pass
+
+    flats_to_update, flats_to_upload = get_old_and_new_flats(searches, wks)
+    upload_new_flats(wks, flats_to_upload)
+    update_old(wks, flats_to_update)
 
 
 if __name__ == "__main__":
-    from directions import *
-    from scrape import *
+    from directions import coord_tuple_to_str, DirectionsFromFlat
+    from scrape import get_list_of_flats, FlatScrape
     from sheets import WSheet
     main()

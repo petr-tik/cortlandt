@@ -12,15 +12,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
-PATH_TO_PHANTOM = "/usr/bin/phantomjs"
-
-
-class MissingPageError(Exception):
-
-    def __init__(self):
-        pass
-
-
 class FlatScrape():
 
     def clean_url(self, dirty_url):
@@ -39,12 +30,16 @@ class FlatScrape():
         """
         self.logger = logging.getLogger("FlatScrape")
         logging.basicConfig(level=logging.INFO)
+
+        PATH_TO_PHANTOM = "/usr/bin/phantomjs"
         driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
         driver.set_page_load_timeout(timeout)
         driver.implicitly_wait(implicit_wait)
         driver.maximize_window()
+
         self.url = self.clean_url(url_to_flat)
         driver.get(self.url)
+
         self.driver = driver
 
     def _get_flat_coordinates(self):
@@ -175,6 +170,7 @@ def get_list_of_flats(results_list_url, timeout=20, implicit_wait=30):
     class_name = "propertyCard-link"
     """
     logger = logging.getLogger("FlatListGetter")
+    PATH_TO_PHANTOM = "/usr/bin/phantomjs"
     driver = webdriver.PhantomJS(executable_path=PATH_TO_PHANTOM)
     driver.set_page_load_timeout(timeout)
     driver.implicitly_wait(implicit_wait)

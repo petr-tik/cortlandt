@@ -4,10 +4,9 @@
 import googlemaps
 from datetime import datetime
 import logging
+import sys
 
 import pprint
-
-woodchurch_flat = (51.543258, -0.191341)
 
 
 def coord_tuple_to_str(coord_tuple):
@@ -176,5 +175,6 @@ class DirectionsFromFlat():
 
 
 if __name__ == "__main__":
+    woodchurch_flat = (51.543258, -0.191341)
     f = DirectionsFromFlat(woodchurch_flat)
     f.get_directions()
