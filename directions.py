@@ -52,6 +52,7 @@ class DirectionsFromFlat():
 
         Output:
         - Minutes (int) from start to finish with a given mode of transport 
+        In case of errors or invalid input, returns 0
 
         Queries distance_matrix API and returns the number of minutes. 
         Walking is independent of departure time (like transit, 
@@ -60,11 +61,16 @@ class DirectionsFromFlat():
         For transit the solution is to run the deamon at normal time of commute 
         0830 - 0900 
         """
+        error_return = 0
+        if start == (-1, -1) or finish == (-1, -1):
+            self.logger.error(
+                "Invalid coordinates: start: {}, finish: {}".format(start, finish))
+            return error_return
         if start == None:
             start = self.flat
         self.logger.info(
             "Finding time to {} from {} to {}".format(mode, start, finish))
-        error_return = -1
+
         try:
             self.logger.info("Request to GMaps Distance Matrix. Mode: \
                               {}, {} -> {}".format(mode, start, finish))
