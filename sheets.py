@@ -86,15 +86,13 @@ class WSheet(pygsheets.Worksheet):
 
     def get_flats(self):
         """ 
-        Used for updating current flats. 
-        Returns a dictionary
+        Used for updating current flats in run.py. Finds and returns 
+        dictionary of flats in the flats worksheet. 
+        Returns a dictionary with dictionary as values. 
             key: flat url
-            value: dictionary 
-                    with Rent_monthly, Date_added and Date_updated values
+            value: another dictionary 
+                    with Rent_monthly, Date_added and Date_updated keys and respective string values.
         """
-
-def test():
-    w = WSheet()
         res = {}
         top_left_idx = (2, 1)
         bottom_right_idx = (self.flat_wks.rows, self.flat_wks.cols)
@@ -116,4 +114,5 @@ def test():
 
 
 if __name__ == "__main__":
-    test()
+    w = WSheet()
+    w.get_flats()
