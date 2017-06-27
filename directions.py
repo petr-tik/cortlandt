@@ -85,7 +85,8 @@ class DirectionsFromFlat():
                     "Request failed. Response status: {}".format(response["status"]))
                 return error_return
         except:
-            self.logger.error("API threw exception")
+            exc_type, exc_msg, _ = sys.exc_info()
+            self.logger.error("{} {}".format(exc_type, exc_msg))
             return error_return
 
     def time_to_walk(self, finish, start=None):
