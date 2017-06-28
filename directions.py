@@ -6,8 +6,6 @@ from datetime import datetime
 import logging
 import sys
 
-import pprint
-
 
 def coord_tuple_to_str(coord_tuple):
     return ",".join(map(str, coord_tuple))
