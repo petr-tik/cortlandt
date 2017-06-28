@@ -19,13 +19,13 @@ Run it as a cron-job, which spins up a Docker container to regularly upload new 
 
 ### Run
 
-Use the Makefile to build a docker container. Put the API credits into json files:
+  * Save your credits and API keys to the json file with the following names. (delete .example from the filename)
+     * g\_maps\_creds.json.example
+     * service\_creds.json.example
+     * g\_sheets\_id.json.example
 
-  * g\_maps\_creds.json
-  * g\_sheets\_creds.json
-  * g\_sheets\_id.json
-
-run.py takes 2 arguments - number of bedrooms and max monthly rent. Edit the Makefile run command to change defaults.
+  * Build and run a docker container - see Makefile
+      * run.py takes 2 arguments - number of bedrooms and max monthly rent. Edit the Makefile run command to change defaults.
 
 ### Design
 
